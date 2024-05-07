@@ -11,6 +11,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -31,37 +32,38 @@ import java.util.Set;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     @Autowired
     private UserRepository userRepository;
 
-    @Bean
-    public SecurityFilterChain defaultFilterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity
-                .csrf(AbstractHttpConfigurer::disable)
-                .cors(Customizer.withDefaults())
-                .authorizeHttpRequests(request -> request
-                        .requestMatchers("/auth/login", "/swagger-ui/**", "/v3/api-docs**").permitAll()
-                        .anyRequest().authenticated())
-                .formLogin(form -> form
-                        .loginPage("http://127.0.0.1:9090/login")
-                        .usernameParameter("email")
-                        .loginProcessingUrl("/auth/login")
-                                .successHandler(this.authenticationSuccessHandler())
-//                                .failureHandler(this.authenticationFailureHandler())
-                )
-                .logout(logout -> logout
-                        .logoutSuccessUrl("http://localhost:9090/login?logout")
-                )
-                .exceptionHandling(handler -> handler
-                        .authenticationEntryPoint(
-                                new HttpStatusEntryPoint(HttpStatus.FORBIDDEN)
-                        )
-                )
-        ;
-        return httpSecurity.build();
-    }
+//    @Bean
+//    public SecurityFilterChain defaultFilterChain(HttpSecurity httpSecurity) throws Exception {
+//        httpSecurity
+//                .csrf(AbstractHttpConfigurer::disable)
+//                .cors(Customizer.withDefaults())
+//                .authorizeHttpRequests(request -> request
+//                        .requestMatchers("/auth/login", "/swagger-ui/**", "/v3/api-docs**").permitAll()
+//                        .anyRequest().authenticated())
+//                .formLogin(form -> form
+//                        .loginPage("http://127.0.0.1:9090/login")
+//                        .usernameParameter("email")
+//                        .loginProcessingUrl("/auth/login")
+//                                .successHandler(this.authenticationSuccessHandler())
+////                                .failureHandler(this.authenticationFailureHandler())
+//                )
+//                .logout(logout -> logout
+//                        .logoutSuccessUrl("http://localhost:9090/login?logout")
+//                )
+//                .exceptionHandling(handler -> handler
+//                        .authenticationEntryPoint(
+//                                new HttpStatusEntryPoint(HttpStatus.FORBIDDEN)
+//                        )
+//                )
+//        ;
+//        return httpSecurity.build();
+//    }
 
 
     @Bean
@@ -78,15 +80,16 @@ public class SecurityConfig {
                 if (user == null) {
                     throw new UsernameNotFoundException("No user with email: " + username);
                 }
-                return new org.springframework.security.core.userdetails.User(
-                        user.getEmail(),
-                        user.getPassword(),
-                        user.isEnabled(),
-                        user.isAccountNonExpired(),
-                        user.isCredentialNonExpired(),
-                        user.isAccountNonLocked(),
-                        getAuthorities(user.getRole())
-                        );
+                return user;
+//                return new org.springframework.security.core.userdetails.User(
+//                        user.getEmail(),
+//                        user.getPassword(),
+//                        user.isEnabled(),
+//                        user.isAccountNonExpired(),
+//                        user.isCredentialsNonExpired(),
+//                        user.isAccountNonLocked(),
+//                        getAuthorities(user.getRole())
+//                        );
             }
         };
     }

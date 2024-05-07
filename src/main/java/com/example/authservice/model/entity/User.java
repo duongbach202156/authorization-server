@@ -23,8 +23,7 @@ import java.util.Set;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonDeserialize
-public class User {
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -42,6 +41,18 @@ public class User {
 
     private boolean accountNonLocked = true;
 
-    private boolean credentialNonExpired = true;
+    private boolean credentialsNonExpired = true;
 
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        Set<GrantedAuthority> authorities = new HashSet<>();
+        authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
+        return authorities;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
 }

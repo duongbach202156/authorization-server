@@ -2,6 +2,7 @@ package com.example.authservice.controller;
 
 import com.example.authservice.model.form.AdminRegistrationForm;
 import com.example.authservice.model.form.LoginForm;
+import com.example.authservice.model.form.ResetPasswordForm;
 import com.example.authservice.response.GenericResponse;
 import com.example.authservice.service.AuthenticationService;
 import com.example.authservice.service.UserService;
@@ -9,7 +10,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -33,7 +36,7 @@ public class AuthenticationController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/login")
+    @PostMapping(value = "/login")
     public ResponseEntity<GenericResponse<?>> authenticate(
             @RequestBody LoginForm loginForm) {
         authenticationService.authenticate(loginForm);
@@ -46,8 +49,21 @@ public class AuthenticationController {
         return new ResponseEntity<>(new GenericResponse<>(null, 201), HttpStatus.CREATED);
     }
 
-    @GetMapping("/test")
-    public String test() {
-        return "TEST";
+    @PostMapping("/forgot-password")
+    public ResponseEntity<GenericResponse<?>> forgotPassword(@RequestBody String email) {
+        userService.forgotPassword(email);
+        return new ResponseEntity<>(new GenericResponse<>(null, 201), HttpStatus.CREATED);
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<GenericResponse<?>> resetPassword(@RequestBody ResetPasswordForm resetPasswordForm) {
+        userService.resetPassword(resetPasswordForm);
+        return new ResponseEntity<>(new GenericResponse<>(null, 201), HttpStatus.CREATED);
+    }
+
+    @GetMapping("/test/{id}")
+    @PreAuthorize("#id == authentication.principal.id")
+    public String test(@PathVariable("id") Long id) {
+        return "TEST" + id;
     }
 }

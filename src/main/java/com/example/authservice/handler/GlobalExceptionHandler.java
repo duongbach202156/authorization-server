@@ -1,6 +1,6 @@
 package com.example.authservice.handler;
 
-import com.example.authservice.exception.UserAlreadyExistException;
+import com.example.authservice.exception.ResourceAlreadyExistException;
 import com.example.authservice.response.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,9 +16,9 @@ import java.util.Collections;
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(UserAlreadyExistException.class)
-    public ResponseEntity<Object> handleUserAlreadyExistException(
-            UserAlreadyExistException ex, WebRequest request
+    @ExceptionHandler(ResourceAlreadyExistException.class)
+    public ResponseEntity<Object> handleResourceAlreadyExistException(
+            ResourceAlreadyExistException ex, WebRequest request
     ) {
         ServletWebRequest servletWebRequest = (ServletWebRequest) request;
         ErrorResponse errorResponse = new ErrorResponse(

@@ -45,5 +45,7 @@ public class AuthServiceApplication implements CommandLineRunner {
 
 		AdminRegistrationForm adminRegistrationForm = new AdminRegistrationForm("admin", "123");
 		userService.createAdmin(adminRegistrationForm);
+
+
 	}
 }

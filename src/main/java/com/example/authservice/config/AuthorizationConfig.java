@@ -79,10 +79,13 @@ public class AuthorizationConfig {
     public SecurityFilterChain authenticationFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
+                .authorizeHttpRequests(request -> request
+                        .requestMatchers("/auth/login", "/swagger-ui/**", "/v3/api-docs**").permitAll()
+                        .anyRequest().authenticated())
                 .formLogin(form -> form
                         .loginPage("http://127.0.0.1:9090/login")
-//                        .usernameParameter("email")
-                        .loginProcessingUrl("/login")
+                        .usernameParameter("email")
+                        .loginProcessingUrl("/auth/login")
                         .successHandler(authenticationSuccessHandler)
                         .failureHandler(authenticationFailureHandler)
                 )
@@ -90,9 +93,11 @@ public class AuthorizationConfig {
                         .logoutSuccessUrl("http://localhost:9090/login?logout")
                 )
                 .exceptionHandling(handler -> handler
-                        .authenticationEntryPoint(
-                                new HttpStatusEntryPoint(HttpStatus.FORBIDDEN)
-                        )
+//                        .authenticationEntryPoint(
+//                                new HttpStatusEntryPoint(HttpStatus.FORBIDDEN)
+//                        )
+                        .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("http://127.0.0.1:9090/login"))
+
                 )
         ;
         return httpSecurity.build();
