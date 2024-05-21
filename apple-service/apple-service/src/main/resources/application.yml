@@ -1,0 +1,24 @@
+#spring.application.name=client-service
+server:
+  port: 8082
+logging:
+  level:
+    root: INFO
+    org.springframework.security: TRACE
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          apple:
+            provider: spring
+            clientId: apple
+            clientSecret: apple
+            clientAuthenticationMethod: client_secret_basic
+            authorizationGrantType: authorization_code
+            scope:
+              - openid
+            redirectUri: http://127.0.0.2:8082/login/oauth2/code/apple
+        provider:
+          spring:
+            issuerUri: http://127.0.0.1:9000

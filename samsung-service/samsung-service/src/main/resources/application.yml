@@ -1,0 +1,24 @@
+#spring.application.name=client-service
+server:
+  port: 8081
+logging:
+  level:
+    root: INFO
+    org.springframework.security: TRACE
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          samsung:
+            provider: spring
+            clientId: samsung
+            clientSecret: samsung
+            clientAuthenticationMethod: client_secret_basic
+            authorizationGrantType: authorization_code
+            scope:
+              - openid
+            redirectUri: http://localhost:8081/login/oauth2/code/samsung
+        provider:
+          spring:
+            issuerUri: http://127.0.0.1:9000
